@@ -13,20 +13,21 @@ mean(str_length(citations_txt))
 
 # Data Cleaning
 sample(citations_txt, 10)
+
 citations_tbl <- enframe(citations_txt, name = "line", value = "cite") %>%
   mutate(cite = str_replace_all(cite, pattern = regex("\"|\'"), replacement = "")) %>%
-  mutate(year = str_extract(cite, pattern = regex("\\d\\d\\d\\d"))) %>%
-  mutate(page_start = str_match(cite, pattern = regex("(\\d*)-\\d*\\.*$"))[,2]) 
-
-%>%
+  mutate(year = str_match(cite, pattern = regex("\\((\\d\\d\\d\\d)\\)"))[,2]) %>%
+  mutate(page_start = str_match(cite, pattern = regex("(\\d*)-\\d*\\.*\\s?\\.?$"))[,2]) %>%
   mutate(perf_ref = str_detect(cite, pattern = regex("performance", ignore_case = TRUE))) %>%
-  #mutate(title = str_match(citations_txt, pattern = UPPER %R% one_or_more(ANY_CHAR)) %R% DOT) 
-  mutate(first_author = str_extract(cite, pattern = regex("(.+)\\.")))
-  
+  mutate(title = str_match(cite, pattern = regex("\\(\\d\\d\\d\\d\\)\\.\\s([^\\.]+)\\."))[,2]) %>%
+  #mutate(first_author = str_match(cite, pattern = regex("([^(]+)"))[,2])
+  #print(count(first_author))
 
 # list of encodings stri_enc_list(simplify = TRUE) ISO-8859-1 taken from class notes
 # to test line 10
 #sum(stri_isempty(citations)) = 10834
 #library(htmltools)
 #library(htmlwidgets)
-#str_view(citations, pattern = ANY_CHAR, match = FALSE)
+#str_view(citations, pattern = regex("."))
+#line16 left intentionally blank not needed
+  #str_match()[,2] works because the result is a dataframe that you can select a column from. Makes for lots of control
