@@ -3,21 +3,30 @@ setwd(dirname(rstudioapi::getActiveDocumentContext()$path))
 library(stringi)
 library(stringr)
 library(tidyverse)
-library(rebus)
+#library(rebus)
 
 # Data Import
-citations <- stri_read_lines(con = "../data/citations.txt", encoding = "iso-8859-1") 
-citations_txt <- str_subset(citations, pattern = ANY_CHAR)
+citations <- stri_read_lines(con = "../data/citations.txt", encoding = "iso-8859-1")
+citations_txt <- str_subset(citations, pattern = regex("."))
 length(citations) - length(citations_txt)
 mean(str_length(citations_txt))
 
 # Data Cleaning
 sample(citations_txt, 10)
+citations_tbl <- enframe(citations_txt, name = "line", value = "cite") %>%
+  mutate(cite = str_replace_all(cite, pattern = regex("\"|\'"), replacement = "")) %>%
+  mutate(year = str_extract(cite, pattern = regex("\\d\\d\\d\\d"))) %>%
+  mutate(page_start = str_match(cite, pattern = regex("(\\d*)-\\d*\\.*$"))[,2]) 
 
-citations_tbl <- as_tibble(citations_txt, rownames = "line", coumn_name = "cite")
+%>%
+  mutate(perf_ref = str_detect(cite, pattern = regex("performance", ignore_case = TRUE))) %>%
+  #mutate(title = str_match(citations_txt, pattern = UPPER %R% one_or_more(ANY_CHAR)) %R% DOT) 
+  mutate(first_author = str_extract(cite, pattern = regex("(.+)\\.")))
+  
 
 # list of encodings stri_enc_list(simplify = TRUE) ISO-8859-1 taken from class notes
 # to test line 10
+#sum(stri_isempty(citations)) = 10834
 #library(htmltools)
 #library(htmlwidgets)
 #str_view(citations, pattern = ANY_CHAR, match = FALSE)
