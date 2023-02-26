@@ -35,5 +35,5 @@ sum(!is.na(citations_tbl$first_author))
 #str_match()[,2] works because the result is a dataframe that you can select a column from. Makes for lots of control
 #Spot checks for final row (next 3 lines):
 #trying to catch more authors not APA format =  mutate(first_author = str_match(cite, pattern = regex("([A-Z][a-z,]+[\\s]?[A-Z]?[\\.]?[,]?[\\s]?[A-Z]?[.]?[,]?)[\\s]?"))[,2])
-print((citations_tbl$first_author))
-print(!is.na(citations_tbl$first_author))
+#print((citations_tbl$first_author))
+#print(!is.na(citations_tbl$first_author))
